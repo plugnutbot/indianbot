@@ -1,0 +1,1250 @@
+Array.prototype.Shift = function () { return Array.prototype.shift.call(this), this; };
+
+var IndianBot = {};
+var ruleSkip = {};
+IndianBot.misc = {};
+IndianBot.settings = {};
+IndianBot.moderators = {};
+IndianBot.filters = {};
+botMethods = {};
+IndianBot.pubVars = {};
+
+toSave = {};
+toSave.settings = IndianBot.settings;
+toSave.moderators = IndianBot.moderators;
+
+IndianBot.misc.version = "harry";
+IndianBot.misc.ready = true;
+var songBoundary = 60 * 10;
+var announcementTick = 60 * 10;
+var lastAnnouncement = 0;
+
+joined = new Date().getTime();
+
+// Filterng Chat
+IndianBot.filters.beggerWords = new Array();
+IndianBot.filters.commandWords = new Array();
+
+// Bot's settings
+IndianBot.settings.songLimit = 10;
+IndianBot.settings.cooldown = 10;
+IndianBot.settings.staffMeansAccess = true;
+IndianBot.settings.historyFilter = true;
+IndianBot.settings.beggerFilter = true;
+IndianBot.settings.commandFilter = true;
+IndianBot.settings.interactive = true;
+IndianBot.settings.ruleSkip = true;
+IndianBot.settings.removedFilter = true;
+
+// Admins ID
+IndianBot.admins = ["3852632", '5448898'];
+
+// ROLE PERMISSION
+plugAdmin = "API.ROLE.ADMIN";
+plugBA = "API.ROLE.AMBASSADOR";
+plugHost = "API.ROLE.HOST";
+plugCohost = "API.ROLE.COHOST";
+plugManager = "API.ROLE.MANAGER";
+plugBouncer = "API.ROLE.BOUNCER";
+plugDj = "API.ROLE.DJ";
+
+// Plug Moderators
+PlugMod = ["API.ROLE.ADMIN", "API.ROLE.AMBASSADOR", "API.ROLE.HOST", "API.ROLE.COHOST", "API.ROLE.MANAGER", "API.ROLE.BOUNCER"];
+
+// Random announcements.
+var announcements =
+["We Are The MineCraft Indians"];
+
+// Keywords of blocked songs
+var blockedSongs = []; //dont work
+
+// Keywords of blocked artist.
+var blockedArtists = [
+"Miley Cyrus",
+"Eduard Khil",
+"Justin Bieber",
+"Lil wayne",
+"Rebecca Black"
+];
+
+// Filter Keywords
+IndianBot.filters.beggerWords = ["fanme", "fan me", "fan4fan", "fan 4 fan", "fan pls", "fans please", "more fan", "fan back", "give me fans", "gimme fans", "need fan", "fan for fan"];
+IndianBot.filters.commandWords = ['.command', '.commands', ".linkin", ".say", ".test", ".ping", ".marco", ".reward", ".add", ".addsong", ".flipcoin", ".catfact", ".dogfact", ".hug", ".8ball", ".fortune", ".songlink", ".download", ".help", ".whywoot", ".whymeh", ".props", ".votes", ".woot", ".meh", ".version", ".userstats @", ".mystats", ".source", ".roomstats", ".roomstats2", ".register", ".join", ".leave", ".roll"];
+
+
+// Fun misc
+IndianBot.misc.tacos = ["blunt", "kush", "Chemo", "Locoweed", "marijuana", "Ganja"];
+IndianBot.misc.cookie = ["a chocolate chip cookie", "a sugar cookie", "an oatmeal raisin cookie", "a 'special' brownie", "an animal cracker", "a scooby snack", "a blueberry muffin", "a cupcake", "Strawberry Sunday", "Chocolate Chip Icecream Cone", "Cookie Dough Triple Scoop ", "Mint Chocolate Chip Icecream Cone", "Chocolate Icecream Sunday", "Banana Split with Whipped Cream", "Vanilla Icecream Cone with Sprinkles ", "Bubblegum Flavored Popcicle"];
+IndianBot.misc.ball = [
+" [:8ball:] It is certain",
+" [:8ball:] It is decidedly so",
+" [:8ball:] Without a doubt",
+" [:8ball:] Yes definitely",
+" [:8ball:] You may rely on it",
+" [:8ball:] As I see it yes",
+" [:8ball:] Most likely",
+" [:8ball:] Outlook good",
+" [:8ball:] Yes",
+" [:8ball:] Signs point to yes :trollface:",
+" [:8ball:] Reply hazy try again",
+" [:8ball:] Ask again later",
+" [:8ball:] Better not tell you now",
+" [:8ball:] Cannot predict now",
+" [:8ball:] Concentrate and ask again",
+" [:8ball:] Don't count on it",
+" [:8ball:] My reply is no",
+" [:8ball:] My sources say no",
+" [:8ball:] Outlook not so good",
+" [:8ball:] Very doubtful"];
+
+IndianBot.misc.ht = ["My magic coins says: Tails", "My magic coin says: Heads"];
+
+IndianBot.misc.roll = [
+"You rolled A 1. Bummer :(",
+"You rolled A 2. Bummer :(",
+"You rolled A 3. Bummer :(",
+"You rolled A 4. Awesome!",
+"You rolled A 5. Awesome!",
+"You rolled A 6. Awesome!"];
+
+IndianBot.misc.catfact = [
+"Cats have five toes on each front paw, but only four toes on each back paw.",
+"Cats have true fur, in that they have both an undercoat and an outer coat.",
+"Newborn kittens have closed ear canals that don''t begin to open for nine days.When the eyes open, they are always blue at first. They change color over a period of months to the final eye color.",
+"Most cats have no eyelashes.", "A cat cannot see directly under its nose.",
+"You can tell a cat's mood by looking into its eyes. A frightened or excited cat will have large, round pupils. An angry cat will have narrow pupils. The pupil size is related as much to the cat's emotions as to the degree of light.",
+"It is a common belief that cats are color blind. However, recent studies have shown that cats can see blue, green and red.",
+"A cat can jump even seven times as high as it is tall.",
+"The cat's footpads absorb the shocks of the landing when the cat jumps.",
+"A cat is pregnant for about 58-65 days.",
+"When well treated, a cat can live twenty or more years but the average life span of a domestic cat is 14 years.",
+"Neutering a cat extends its life span by two or three years.",
+"Cats can't taste sweets.",
+"Cats must have fat in their diet because they can't produce it on their own.",
+"Some common houseplants poisonous to cats include: English Ivy, iris, mistletoe, philodendron, and yew.",
+"Tylenol and chocolate are both poisonous to cats.",
+"Many cats cannot properly digest cow's milk.",
+"The average cat food meal is the equivalent to about five mice.",
+"Cats have AB blood groups just like people.",
+"The color of the points in Siamese cats is heat related. Cool areas are darker.",
+"The chlorine in fresh tap water irritates sensitive parts of the cat's nose. Let tap water sit for 24 hours before giving it to a cat.",
+"Today there are about 100 distinct breeds of the domestic cat.",
+"The first cat show was in 1871 at the Crystal Palace in London.",
+"In ancient Egypt, mummies were made of cats, and embalmed mice were placed with them in their tombs. In one ancient city, over 300,000 cat mummies were found.",
+"In ancient Egypt, killing a cat was a crime punishable by death.",
+"The ancestor of all domestic cats is the African Wild Cat which still exists today.",
+"Cats do not think that they are little people. They think that we are big cats. This influences their behavior in many ways.",
+"Abraham Lincoln loved cats. He had four of them while he lived in the White House.",
+"Julius Caesar, Henri II, Charles XI, and Napoleon were all afraid of cats.",
+"Cats have an average of 24 whiskers, arranged in four horizontal rows on each side.",
+"Almost 10% of a cat's bones are in its tail, and the tail is used to maintain balance.",
+"Jaguars are the only big cats that don't roar.",
+"A cat's field of vision is about 185 degrees.",
+"The Maine Coon is 4 to 5 times larger than the Cingapura, the smallest breed of cat.",
+"Retractable claws are a physical phenomenon that sets cats apart from the rest of the animal kingdom. In the cat family, only cheetahs cannot retract their claws.",
+"A cat can sprint at about thirty-one miles per hour.",
+"A cat can spend five or more hours a day grooming themselves.",
+"The cat has been living in close association with humans for somewhere between 3,500 and 8,000 years.",
+"The domestic house cat is a small carnivorous mammal. Its most immediate ancestor is believed to be the African wild cat.",
+"Cats usually weigh between 2.5 and 7 kg (5.5–16 pounds), although some breeds can exceed 11.3 kg (25 pounds).",
+"Domestic cats tend to live longer if they are not permitted to go outdoors.",
+"Cats, in some cases, can sleep as much as 20 hours in a 24-hour period. The term cat nap refers to the cat's ability to fall asleep (lightly) for a brief period.",
+"Cats dislike citrus scent.",
+"A cat''s tongue has tiny barbs on it.",
+"Cats can be right-pawed or left-pawed.",
+"It has been scientifically proven that stroking a cat can lower one's blood pressure.",
+"Six-toed kittens are so common in Boston and surrounding areas of Massachusetts that experts consider it an established mutation.",
+"Cat families usually play best in even numbers. Cats and kittens should be acquired in pairs whenever possible."];
+
+IndianBot.misc.dogfact = [
+"Three dogs (from First Class cabins!) survived the sinking of the Titanic – two Pomeranians and one Pekingese.",
+"It’s rumored that, at the end of the Beatles song, “A Day in the Life,” Paul McCartney recorded an ultrasonic whistle, audible only to dogs, just for his Shetland sheepdog.",
+"Puppies have 28 teeth and normal adult dogs have 42.",
+"Dogs chase their tails for a variety of reasons: curiosity, exercise, anxiety, predatory instinct or, they might have fleas! If your dog is chasing his tail excessively, talk with your vet.",
+"Dalmatian puppies are pure white when they are born and develop their spots as they grow older.",
+"Dogs and humans have the same type of slow wave sleep (SWS) and rapid eye movement (REM) and during this REM stage dogs can dream. The twitching and paw movements that occur during their sleep are signs that your pet is dreaming",
+"Dogs’ eyes contain a special membrane, called the tapetum lucidum, which allows them to see in the dark.",
+"A large breed dog’s resting heart beats between 60 and 100 times per minute, and a small dog breed’s heart beats between 100-140. Comparatively, a resting human heart beats 60-100 times per minute.",
+"According to a Petside.com - Press poll, 72% of dog owners believe their dog can detect when stormy weather is on the way.",
+"A dog’s normal temperature is between 101 and 102.5 degrees Fahrenheit.",
+"Unlike humans who sweat everywhere, dogs only sweat through the pads of their feet.",
+"Dogs have three eyelids, an upper lid, a lower lid and the third lid, called a nictitating membrane or “haw,” which helps keep the eye moist and protected.",
+"Americans love dogs! 62% of U.S. households own a pet, which equates to 72.9 million homes",
+"45% of dogs sleep in their owner’s bed (we’re pretty sure a large percentage also hogs the blankets!)",
+"Why are dogs’ noses so wet? Dogs’ noses secrete a thin layer of mucous that helps them absorb scent. They then lick their noses to sample the scent through their mouth.",
+"Dogs have about 1,700 taste buds. Humans have approximately 9,000 and cats have around 473.",
+"A Dog’s sense of smell is 10,000 – 100,000 times more acute as that of humans.",
+"It’s a myth that dogs only see in black and white. In fact, it’s believed that dogs see primarily in blue, greenish-yellow, yellow and various shades of gray.",
+"Sound frequency is measured in Hertz (Hz). The higher the Hertz, the higher-pitched the sound. Dogs hear best at 8,000 Hz, while humans hear best at around 2,000 Hz.",
+"Dogs’ ears are extremely expressive. It’s no wonder! There are more than a dozen separate muscles that control a dog’s ear movements.",
+"While the Chow Chow dogs are well known for their distinctive blue-black tongues, they’re actually born with pink tongues. They turn blue-black at 8-10 weeks of age.",
+"When dogs kick after going to the bathroom, they are using the scent glands on their paws to further mark their territory.",
+"Dogs curl up in a ball when they sleep due to an age-old instinct to keep themselves warm and protect their abdomen and vital organs from predators.",
+"Dogs are capable of understanding up to 250 words and gestures, can count up to five and can perform simple mathematical calculations. The average dog is as intelligent as a two-year-old child.",
+"Some stray Russian dogs have figured out how to use the subway system in order to travel to more populated areas in search of food.",
+"Dogs don’t enjoy being hugged as much as humans and other primates.",
+"Two stray dogs in Afghanistan saved 50 American soliders. A Facebook group raised $21,000 to bring the dogs back to the US and reunite them with the soldiers.",
+"Service dogs are trained to know when they are on duty. When their harness is on, they know it’s business time. When you take it off, the pups immediately become playful and energetic.",
+"Tiger Woods stuttered as a child and used to talk to his dog until he fell asleep in an effort to get rid of it.",
+"Seeing eye dogs pee and poo on command so that their owners can clean up after them."];
+
+IndianBot.misc.fortune = [
+" There is a true and sincere friendship between you and your friends.",
+" You find beauty in ordinary things, do not lose this ability.",
+" Ideas are like children; there are none so wonderful as your own.",
+" It takes more than good memory to have good memories.",
+" A thrilling time is in your immediate future.",
+" Plan for many pleasures ahead.",
+" The joyfulness of a man prolongeth his days.",
+" Your everlasting patience will be rewarded sooner or later.",
+" Make two grins grow where there was only a grouch before.",
+" Something you lost will soon turn up.",
+" Your heart is pure, and your mind clear, and your soul devout.",
+" Excitement and intrigue follow you closely wherever you go!",
+" A pleasant surprise is in store for you.",
+" May life throw you a pleasant curve.",
+" As the purse is emptied the heart is filled.",
+" Be mischievous and you will not be lonesome.",
+" You have a deep appreciation of the arts and music.",
+" Your flair for the creative takes an important place in your life.",
+" Your artistic talents win the approval and applause of others.",
+" Pray for what you want, but work for the things you need.",
+" Your many hidden talents will become obvious to those around you.",
+" Don't forget, you are always on our minds.",
+" Don't forget, you are always on our minds.",
+" Your greatest fortune is the large number of friends you have.",
+" A firm friendship will prove the foundation on your success in life.",
+" Don't ask, don't say. Everything lies in silence.",
+" Look for new outlets for your own creative abilities.",
+" Be prepared to accept a wondrous opportunity in the days ahead!",
+" Fame, riches and romance are yours for the asking.",
+" Good luck is the result of good planning.",
+" Good things are being said about you.",
+" Smiling often can make you look and feel younger.",
+" Someone is speaking well of you.",
+" The time is right to make new friends.",
+" You will inherit some money or a small piece of land.",
+" Your life will be happy and peaceful.",
+" A friend is a present you give yourself.",
+" A member of your family will soon do something that will make you proud.",
+" A quiet evening with friends is the best tonic for a long day.",
+" A single kind word will keep one warm for years.",
+" Anger begins with folly, and ends with regret.",
+" Generosity and perfection are your everlasting goals.",
+" Happy news is on its way to you.",
+" He who laughs at himself never runs out of things to laugh at.",
+" If your desires are not extravagant they will be granted.",
+" Let there be magic in your smile and firmness in your handshake.",
+" If you want the rainbow, you must to put up with the rain. D. Parton",
+" Nature, time and patience are the three best physicians.",
+" Strong and bitter words indicate a weak cause.",
+" The beginning of wisdom is to desire it.",
+" You will have a very pleasant experience.",
+" You will inherit some money or a small piece of land.",
+" You will live a long, happy life.",
+" You will spend old age in comfort and material wealth.",
+" You will step on the soil of many countries.",
+" You will take a chance in something in the near future.",
+" You will witness a special ceremony.",
+" Your everlasting patience will be rewarded sooner or later.",
+" Your great attention to detail is both a blessing and a curse.",
+" Your heart is a place to draw true happiness.",
+" Your ability to juggle many tasks will take you far.",
+" A friend asks only for your time, not your money.",
+" You will be invited to an exciting event."];
+
+
+IndianBot.pubVars.skipOnExceed;
+IndianBot.pubVars.command = false;
+
+Array.prototype.remove = function () { var c, f = arguments, d = f.length, e; while (d && this.length) { c = f[--d]; while ((e = this.indexOf(c)) !== -1) { this.splice(e, 1) } } return this };
+
+if (window.location.hostname === "plug.dj") {
+    window.setInterval(sendAnnouncement, 1000 * announcementTick);
+    API.on(API.ADVANCE, djAdvanceEvent);
+    API.on(API.ADVANCE, listener);
+    API.on(API.ADVANCE, woot);
+    API.on(API.USER_JOIN, UserJoin);
+    $('#playback').hide();
+    API.setVolume(0);
+
+    function woot() {
+        $('#woot').click();
+    };
+
+    function UserJoin(user) {
+        var JoinMsg = ["@user has joined!", "welcome, @user!", "Hey there, @user!", "Glad you came by, @user"];
+        r = Math.floor(Math.random() * JoinMsg.length);
+        API.sendChat(JoinMsg[r].replace("user", user.username));
+    };
+
+    function djAdvanceEvent(data) {
+        setTimeout(function () { botMethods.data }, 500);
+    };
+
+    IndianBot.skip = function () {
+        API.moderateForceSkip();
+    };
+
+    IndianBot.unhook = function () {
+        setTimeout(function () {
+            API.off(API.USER_JOIN);
+            API.off(API.USER_LEAVE);
+            API.off(API.USER_SKIP);
+            API.off(API.USER_FAN);
+            API.off(API.GRAB_UPDATE);
+            API.off(API.ADVANCE);
+            API.off(API.VOTE_UPDATE);
+            API.off(API.CHAT);
+            $('#playback').show();
+            API.setVolume(15);
+        }, 100);
+    };
+
+    IndianBot.hook = function () {
+        (function () {
+            $.getScript('');
+            API.setVolume(0);
+        }());
+    };
+
+    botMethods.load = function () {
+        toSave = JSON.parse(localStorage.getItem("IndianBotSave"));
+        IndianBot.settings = toSave.settings;
+        ruleSkip = toSave.ruleSkip;
+    };
+
+    botMethods.save = function () { localStorage.setItem("IndianBotSave", JSON.stringify(toSave)) };
+
+    botMethods.loadStorage = function () {
+        if (localStorage.getItem("IndianBotSave") !== null) {
+            botMethods.load();
+        } else {
+            botMethods.save();
+        }
+    };
+
+    botMethods.checkHistory = function () {
+        currentlyPlaying = API.getMedia(), history = API.getHistory();
+        caught = 0;
+        for (var i = 0; i < history.length; i++) {
+            if (currentlyPlaying.cid === history[i].media.cid) {
+                caught++;
+            }
+        }
+        caught--;
+        return caught;
+    };
+
+    function getUser(username) {
+        var users = API.getUsers();
+        for (var i = 0; i < users.length; i++)
+            if (users[i].username == username)
+                return users[i];
+        return false;
+    };
+
+    botMethods.cleanString = function (string) {
+        return string.replace("&#39;", "'").replace(/&amp;/g, "&").replace(/&#34;/g, "\"").replace(/&#59;/g, ";").replace(/&lt;/g, "<").replace(/&gt;/g, ">");
+    };
+
+    function listener(data) {
+        if (data == null) {
+            return;
+        }
+
+        var title = data.media.title;
+        var author = data.media.author;
+        for (var i = 0; i < blockedSongs.length; i++) {
+            if (title.indexOf(blockedSongs[i]) != -1 || author.indexOf(blockedArtists[i]) != -1) {
+                API.moderateForceSkip();
+                chatMe("I Skipped: " + title + "or" + author + " because it is blocked.");
+                return;
+            }
+        }
+
+        var songLenRaw = $("#time-remaining-value").text();
+        var songLenParts = songLenRaw.split(":");
+        var songLen = (parseInt(songLenParts[0].substring(1)) * 60) + parseInt(songLenParts[1]);
+        if (songLen >= songBoundary) {
+            window.setTimeout(skipLongSong, 1000 * songBoundary);
+        }
+    }
+
+    function skipLongSong() {
+        chatMe("Skipping song because it has exceeded the song limit (" + (songBoundary / 60) + " minutes.)");
+        API.moderateForceSkip();
+    }
+
+    function sendAnnouncement() {
+        if (lastAnnouncement++ >= announcements.length - 1) {
+            lastAnnouncement = 0;
+        }
+        chatMe(announcements[lastAnnouncement]);
+    }
+
+    function chatMe(msg) {
+        API.sendChat(msg);
+    };
+
+
+    API.on(API.CHAT, function (data) { // Chat Function #0
+        if (data.message.indexOf('.') === 0) {
+            var msg = data.message, from = data.un, fromID = data.unID;
+            var id = data.unID;
+            var msg = data.message;
+            var userfrom = data.un;
+            var command = msg.substring(1).split(' ');
+            if (typeof command[2] != "undefined") {
+                for (var i = 2; i < command.length; i++) {
+                    command[1] = command[1] + ' ' + command[i];
+                }
+            }
+            if (IndianBot.misc.ready || API.getUsers(data.un, IndianBot.admins) || API.hasPermission(plugAdmin) || API.hasPermission(plugBA) || API.hasPermission(plugHost) || API.hasPermission(plugCohost) || API.hasPermission(plugManager) || API.hasPermission(plugBouncer) || API.hasPermission(plugDj)) {
+                switch (command[0].toLowerCase()) {
+
+                    case "command":
+                    case "commands":
+                        if (API.getUser(fromID).permission < 2 || API.getUsers(data.un, IndianBot.admins)) {
+                            API.sendChat("@" + data.un + " My commands can be found no where");
+                        }
+                        break;
+
+                    case "test":
+                        if (API.getUsers(data.un, IndianBot.admins)) {
+                            API.sendChat("@" + data.un + " Test Successful");
+                        } else {
+                            API.sendChat("This command requires Admins only!");
+                        }
+                        break;
+
+                    case "ping":
+                        if (API.getUsers(data.un, PlugMod)) {
+                            API.sendChat("@" + data.un + " Pong!");
+                        } else {
+                            API.sendChat('You need to be a staff memeber to do that!');
+                        }
+                        break;
+
+                    case "marco":
+                        if (API.getUsers(data.un, PlugMod) || API.getUsers(data.un, IndianBot.admins)) {
+                            API.sendChat("@" + data.un + " Polo!");
+                        } else {
+                            API.sendChat('You need to be a staff memeber to do that!');
+                        }
+                        break;
+
+                    case "skip":
+                        if (API.getUsers(data.un, PlugMod) || API.getUsers(data.un, IndianBot.admins)) {
+                            IndianBot.skip();
+                        } else {
+                            API.sendChat('You need to be a staff memeber to do that!');
+                        }
+                        break;
+
+                    case "unlock":
+                        if (API.getUsers(data.un, PlugMod) || API.getUsers(data.un, IndianBot.admins)) {
+                            API.moderateLockWaitList(false);
+                        } else {
+                            API.sendChat('You need to be a staff memeber to do that!');
+                        }
+                        break;
+
+                    case "add":
+                        if (API.getUsers(data.un) || API.getUsers(data.un, IndianBot.admins)) {
+                            API.moderateAddDJ(data.un);
+                        }
+                        break;
+
+                    case "remove":
+                        if (API.getUsers(data.un) || API.getUsers(data.un, IndianBot.admins)) {
+                            API.moderateRemoveDJ(data.unID);
+                        }
+                        break;
+
+                    case "ban":
+                        if (API.getUsers(data.un, PlugMod) || API.getUsers(data.un, IndianBot.admins) || typeof command[1] == "undefined") {
+                            var username = msg.indexOf('@') + 1;
+                            var userid = getUser(username).id;
+                            API.moderateBanUser(userid, 0, API.BAN.HOUR);
+                        } else {
+                            API.sendChat('You need to be a staff memeber to do that!');
+                        }
+                        break;
+
+                    case "queup":
+                        if (API.getUsers(data.un, PlugMod) || API.getUsers(data.un, IndianBot.admins) || typeof command[1] == "undefined") {
+                            var username = msg.indexOf('@') + 1;
+                            var userid = getUser(username).id;
+                            API.moderateAddDJ(userid);
+                        } else {
+                            API.sendChat('You need to be a staff memeber to do that!');
+                        }
+                        break;
+
+                    case "quedown":
+                        if (API.getUsers(data.un, PlugMod) || API.getUsers(data.un, IndianBot.admins)) {
+                            var username = msg.substr(msg.indexOf('@') + 1);
+                            var userid = getUser(username).id;
+                            API.moderateRemoveDJ(userid);
+                        } else {
+                            API.sendChat('You need to be a staff memeber to do that!');
+                        }
+                        break;
+
+                    case "lock":
+                        if (API.getUsers(data.un, PlugMod) || API.getUsers(data.un, IndianBot.admins)) {
+                            API.moderateLockWaitList(true);
+                        } else {
+                            API.sendChat('You need to be a staff memeber to do that!');
+                        }
+                        break;
+
+                    case "lockskip":
+                        if (API.getUsers(data.un, PlugMod) || API.getUsers(data.un, IndianBot.admins)) {
+                            API.moderateLockWaitList(true);
+                            setTimeout("IndianBot.skip();", 100);
+                            setTimeout("API.moderateLockWaitList(false);", 700);
+                        } else {
+                            API.sendChat('You need to be a staff memeber to do that!');
+                        }
+                        break;
+
+                    case "say":
+                        if (API.getUsers(data.un, PlugMod) || API.getUsers(data.un, IndianBot.admins) || typeof command[1] === "undefined") {
+                            API.sendChat(command[1]);
+                        } else {
+                            API.sendChat('You need to be a staff memeber to do that!');
+                        }
+                        break;
+
+                    case "linkin":
+                        if (typeof command[1] == "undefined") {
+                            API.sendChat("@" + data.un + " Put a link starting off from www.");
+                        } else if (command[1].toLowerCase().indexOf("plug.dj") === -1 && command[1].toLowerCase().indexOf("bug.dj") === -1 && command[1].toLowerCase().indexOf("porn") === -1 && command[1].toLowerCase().indexOf("sex") === -1) {
+                            API.sendChat("http://" + command[1]);
+                        } else {
+                            var IdiotMsg = ["Dude wtf is wrong with you? @idiot, Search that up yourself!", "Sorry i cannot search that up! @idiot", "@idiot You think i'd be that stupid enough to search that up?", "What are you an idiot? @idiot"];
+                            r = Math.floor(Math.random() * IdiotMsg.length);
+                            API.sendChat(IdiotMsg[r].replace("idiot", data.un));
+                        }
+                        break;
+
+                    case "grab":
+                    case "snag":
+                        if (API.getUsers(data.un, PlugMod) || API.getUsers(data.un, IndianBot.admins)) {
+                            var addsong = ["[user] I am now grabbing current song.", "[user] This song is now mine! :blush:", "[user] Now adding this current music video..."];
+                            r = Math.floor(Math.random() * addsong.length);
+                            API.sendChat(addsong[r].replace("user", data.un));
+                            $(".icon-curate").click();
+                            $($(".curate").children(".menu").children().children()[0]).mousedown();
+                        } else {
+                            API.sendChat('You need to be a staff memeber to do that!');
+                        }
+                        break;
+
+                    case "props":
+                        if (API.getUsers(data.un, PlugMod) || API.getUsers(data.un, PlugMod) || API.getUsers(data.un, IndianBot.admins)) {
+                            if (typeof command[1] === "undefined") {
+                                API.sendChat("@" + data.un + " just gave props to @" + API.getDJ().username + " for playing a dope track!");
+                            }
+                        }
+                        break;
+
+                    case "songlink":
+                        if (API.getMedia().format == 1) {
+                            API.sendChat("@" + data.un + " " + "http://youtu.be/" + API.getMedia().cid);
+                        } else {
+                            var id = API.getMedia().cid;
+                            SC.get('/tracks', { ids: id, }, function (tracks) {
+                                API.sendChat("@" + data.un + " " + tracks[0].permalink_url);
+                            });
+                        }
+                        break;
+
+                    case "download":
+                        if (typeof command[1] == "undefined") {
+                            API.sendChat("Download your song free here: http://www.vebsi.com/");
+                        } else if (command[1].indexOf("@") > -1) {
+                            API.sendChat(command[1] + " Download your song free here: http://www.vebsi.com/");
+                        } else {
+                            API.sendChat("Download your song free here: http://www.vebsi.com/");
+                        }
+                        break;
+
+                    case "woot":
+                        if (API.getUsers(data.un, PlugMod) || API.getUsers(data.un, IndianBot.admins)) {
+                            if (typeof command[1] === "undefined") {
+                                API.sendChat("One woot coming up!");
+                                setTimeout(function () {
+                                    document.getElementById("woot").click()
+                                }, 650);
+                            }
+                        } else {
+                            API.sendChat("This command requires bouncer +");
+                        }
+                        break;
+
+                    case "meh":
+                        if (API.getUsers(data.un, PlugMod) || API.getUsers(data.un, IndianBot.admins)) {
+                            if (typeof command[1] === "undefined") {
+                                API.sendChat("Bummer, A meh has been requested!!");
+                                setTimeout(function () {
+                                    document.getElementById("meh").click()
+                                }, 650);
+                            }
+                        } else {
+                            API.sendChat("This command requires bouncer +");
+                        }
+                        break;
+
+                    case "join":
+                        if (API.getUsers(data.un, PlugMod) || API.getUsers(data.un, IndianBot.admins)) {
+                            setTimeout(function () {
+                                var joindj = ["[user] Time to spin a track! :speaker:", "[user] Seems like i'm up!", "[user] Now joinning the booth"];
+                                r = Math.floor(Math.random() * joindj.length);
+                                API.sendChat(joindj[r].replace("user", data.un));
+                                API.djJoin();
+                            }, 100);
+                        } else {
+                            API.sendChat("This command requires bouncer +");
+                        }
+                        break;
+
+                    case "leave":
+                        if (API.getUsers(data.un, PlugMod) || API.getUsers(data.un, IndianBot.admins)) {
+                            setTimeout(function () {
+                                var leavedj = ["[user] Now leaving the dj booth...", "[user] Kicking me off :(", "[user] Made a pic for you! http://i.imgur.com/4uVDb6f.gif  ....Loser"];
+                                r = Math.floor(Math.random() * leavedj.length);
+                                API.sendChat(leavedj[r].replace("user", data.un));
+                                API.djLeave();
+                            }, 100);
+                        } else {
+                            API.sendChat("This command requires bouncer +");
+                        }
+                        break;
+
+                    case "votes":
+                        if (API.getUsers(data.un, PlugMod) || API.getUsers(data.un, PlugMod) || API.getUsers(data.un, IndianBot.admins)) {
+                            API.sendChat("Users vote:  :+1: " + API.getRoomScore().positive + " | :-1: " + API.getRoomScore().negative + " | :purple_heart: " + API.getRoomScore().curates);
+                            IndianBot.misc.ready = false;
+                            setTimeout(function () { IndianBot.misc.ready = true; }, IndianBot.settings.cooldown * 1000);
+                        }
+                        break;
+
+                    case "version":
+                        if (API.getUsers(data.un, PlugMod) || API.getUsers(data.un, IndianBot.admins)) {
+                            API.sendChat("Bot Version " + IndianBot.misc.version);
+                            IndianBot.misc.ready = false;
+                            setTimeout(function () { IndianBot.misc.ready = true; }, IndianBot.settings.cooldown * 1000);
+                        } else {
+                            API.sendChat("This command requires bouncer +");
+                        }
+                        break;
+
+                    case "source":
+                        if (API.getUsers(data.un, PlugMod) || API.getUsers(data.un, PlugMod) || API.getUsers(data.un, IndianBot.admins)) {
+                            API.sendChat("DJ - ɴᴇᴏɴ - TFL wrote me at github which is available here: http://goo.gl/iLRyWJ");
+                            IndianBot.misc.ready = false;
+                            setTimeout(function () { IndianBot.misc.ready = true; }, IndianBot.settings.cooldown * 1000);
+                        }
+                        break;
+
+                    case "reload":
+                        if (API.getUsers(data.un, PlugMod) || API.getUsers(data.un, IndianBot.admins)) {
+                            API.sendChat("Now reloading script...");
+                            setTimeout(function () {
+                                IndianBot.unhook();
+                            }, 150);
+                            setTimeout(function () {
+                                IndianBot.hook();
+                            }, 550);
+                        } else {
+                            API.sendChat("This command requires bouncer +");
+                        }
+                        break;
+
+                    case "die5046":
+                        if (API.getUsers(data.un, PlugMod) || API.getUsers(data.un, IndianBot.admins)) {
+                            API.sendChat('Unhooking Events...');
+                            setTimeout(function () {
+                                API.sendChat('Deleting bot data...');
+                            }, 150);
+                            setTimeout(function () {
+                                API.sendChat('Consider me dead');
+                            }, 750);
+                            setTimeout(function () {
+                                IndianBot.unhook();
+                            }, 700);
+                        } else {
+                            API.sendChat("This command requires bouncer +");
+                        }
+                        break;
+
+                    case "whywoot":
+                        if (API.getUsers(data.un, PlugMod) || API.getUsers(data.un, PlugMod) || API.getUsers(data.un, IndianBot.admins)) {
+                            API.sendChat("Plug gives you 1 point for wooting the current song if you don't like the song i suggest you remain neutral");
+                        } else if (command[1].indexOf("@") > -1) {
+                            API.sendChat(command[1] + " Plug gives you 1 point for wooting the current song if you don't like the song i suggest you remain neutral");
+                        } else {
+                            API.sendChat("Plug gives you 1 point for wooting the current song if you don't like the song i suggest you remain neutral");
+                        }
+                        if (API.getUsers(data.un, IndianBot.admins) || API.getUsers(data.un, PlugMod)) {
+                            IndianBot.misc.ready = false;
+                            setTimeout(function () { IndianBot.misc.ready = true; }, IndianBot.settings.cooldown * 1000);
+                        }
+                        break;
+
+                    case "whymeh":
+                        if (API.getUsers(data.un, PlugMod) || API.getUsers(data.un, PlugMod) || API.getUsers(data.un, IndianBot.admins)) {
+                            API.sendChat("Reserve Mehs for songs that are a) extremely overplayed b) off genre c) absolutely god awful or d) troll songs. ");
+                        } else if (command[1].indexOf("@") > -1) {
+                            API.sendChat(command[1] + " Reserve Mehs for songs that are a) extremely overplayed b) off genre c) absolutely god awful or d) troll songs. ");
+                        } else {
+                            API.sendChat("Reserve Mehs for songs that are a) extremely overplayed b) off genre c) absolutely god awful or d) troll songs. ");
+                        }
+                        if (API.getUsers(data.un, IndianBot.admins) || API.getUsers(data.un, PlugMod)) {
+                            IndianBot.misc.ready = false;
+                            setTimeout(function () { IndianBot.misc.ready = true; }, IndianBot.settings.cooldown * 1000);
+                        }
+                        break;
+
+                    case "help":
+                        if (typeof command[1] == "undefined") {
+                            API.sendChat("Greetings! Create a playlist and populate it with songs from either YouTube or Soundcloud. Click the 'Join Waitlist' button and wait your turn to play music.");
+                            setTimeout(function () {
+                                API.sendChat("Ask a mod if you're unsure about your song choice.");
+                            }, 650);
+                        } else if (command[1].indexOf("@") > -1) {
+                            API.sendChat(command[1] + "Greetings! Create a playlist and populate it with songs from either YouTube or Soundcloud. Click the 'Join Waitlist' button and wait your turn to play music.");
+                            setTimeout(function () {
+                                API.sendChat("Ask a mod if you're unsure about your song choice.");
+                            }, 650);
+                        }
+                        if (API.getUsers(data.un, IndianBot.admins) || API.getUsers(data.un, PlugMod)) {
+                            IndianBot.misc.ready = false;
+                            setTimeout(function () { IndianBot.misc.ready = true; }, IndianBot.settings.cooldown * 1000);
+                        }
+                        break;
+
+                    case "define":
+                        if (typeof command[1] == "undefined") {
+                            API.sendChat("@" + data.un + " Define what?!");
+                        } else if (command[1].toLowerCase().indexOf("xxx") === -1 && command[1].toLowerCase().indexOf("porn") === -1 && command[1].toLowerCase().indexOf("sex") === -1) {
+                            API.sendChat("@" + data.un + " http://www.urbandictionary.com/define.php?term=" + command[1]);
+                        } else {
+                            var idiotMsg = ["Dude wtf is wrong with you search that up yourself.", "You sound stupid yo", "What do i look like a porn bot?", "What are you an idiot?"];
+                            API.sendChat("@" + data.un + " " + idiotMsg[Math.floor(Math.random() * idiotMsg.length)]);
+                        }
+                        if (IndianBot.admins.indexOf(fromID) == -1 || API.getUsers(data.un, PlugMod)) {
+                            IndianBot.misc.ready = false;
+                            setTimeout(function () { IndianBot.misc.ready = true; }, IndianBot.settings.cooldown * 1000);
+                        }
+                        break;
+
+                    case "author":
+                    case "authors":
+                    case "creator":
+                        if (IndianBot.admins.indexOf(fromID) !== -1 || API.getUsers(data.un, PlugMod)) {
+                            API.sendChat("");
+                        }
+                        break;
+
+                    case "beggerfilter":
+                    case "bf":
+                        if (API.getUsers(data.un, PlugMod) || API.getUsers(data.un, IndianBot.admins)) IndianBot.settings.beggerFilter ? API.sendChat("Begger filter is enabled") : API.sendChat("Begger filter is disabled");
+                        botMethods.save();
+                        break;
+
+                    case "commandfilter":
+                    case "cf":
+                        if (API.getUsers(data.un, PlugMod) || API.getUsers(data.un, IndianBot.admins)) IndianBot.settings.commandFilter ? API.sendChat("Commands filter is enabled") : API.sendChat("Commands filter is disabled");
+                        botMethods.save();
+                        break;
+
+                    case "tbf":
+                        if (API.getUsers(data.un, PlugMod) || API.getUsers(data.un, IndianBot.admins)) {
+                            if (IndianBot.settings.beggerFilter) {
+                                IndianBot.settings.beggerFilter = false;
+                                API.sendChat("Bot will no longer filter fan begging.");
+                            } else {
+                                IndianBot.settings.beggerFilter = true;
+                                API.sendChat("Bot will now filter fan begging.");
+                            }
+                        }
+                        break;
+
+                    case "tcf":
+                        if (API.getUsers(data.un, PlugMod) || API.getUsers(data.un, IndianBot.admins)) {
+                            if (IndianBot.settings.commandFilter) {
+                                IndianBot.settings.commandFilter = false;
+                                API.sendChat("Bot will no longer filter commands.");
+                            } else {
+                                IndianBot.settings.commandFilter = true;
+                                API.sendChat("Bot will now filter commands.");
+                            }
+                        }
+                        break;
+
+                    case "songLimit":
+                               if(API.getUsers(data.un, PlugMod) || API.getUsers(data.un, IndianBot.admins)){
+                               if(typeof command[1] == "undefined"){
+                               API.sendChat("Hey smart guy i need a number");
+                               }else if(isFinite(String(command[1]))){
+                               API.sendChat("Setting the Max Length to " + command[1]);
+                               IndianBot.settings.songLimit = command[1];
+                                  }
+                               }
+                               break;
+
+                    case "status":
+                        if (API.getUsers(data.un, PlugMod) || API.getUsers(data.un, IndianBot.admins)) {
+                            var response = "";
+                            var currentTime = new Date().getTime();
+                            var minutes = Math.floor((currentTime - joined) / 60000);
+                            var hours = 0;
+                            while (minutes > 60) {
+                                minutes = minutes - 60;
+                                hours++;
+                            }
+                            hours == 0 ? response = "Running for " + minutes + "m " : response = "Running for " + hours + "h " + minutes + "m";
+                            response = response + " | Begger Filter: " + IndianBot.settings.beggerFilter;
+                            response = response + " | History Filter: " + IndianBot.settings.historyFilter;
+                            response = response + " | Commands Filter: " + IndianBot.settings.commandFilter;
+                            response = response + " | SongLimit: " + IndianBot.settings.songLimit + "m";
+                            response = response + " | Cooldown: " + IndianBot.settings.cooldown + "s";
+                            response = response + " | CPU Filter: " + IndianBot.settings.removedFilter;
+                            API.sendChat(response);
+                        } else {
+                            API.sendChat("This command requires bouncer +");
+                        }
+                        break;
+
+                    case "fortune":
+					        if (typeof command[1] == "undefined") {
+                            var crowd = API.getUsers();
+                            var randomUser = Math.floor(Math.random() * crowd.length);
+                            var randomfortune = Math.floor(Math.random() * IndianBot.misc.fortune.length);
+                            var randomSentence = Math.floor(Math.random() * 1);
+                            switch (randomSentence) {
+                                case 0:
+                                    API.sendChat("@" + data.un + ", " + IndianBot.misc.fortune[randomfortune]);
+                                    break;
+                                case 1:
+                                    API.sendChat("@" + data.un + ", " + IndianBot.misc.fortune[randomfortune]);
+                                    break;
+                            }
+                        } else {
+                            if (command[1].indexOf("@") === 0) command[1] = command[1].substring(1);
+                            var randomfortune = Math.floor(Math.random() * IndianBot.misc.fortune.length);
+                            var randomSentence = Math.floor(Math.random() * 1);
+                            switch (randomSentence) {
+                                case 0:
+                                    API.sendChat("@" + data.un + ", " + IndianBot.misc.fortune[randomfortune]);
+                                    break;
+                                case 1:
+                                    API.sendChat("@" + data.un + ", " + IndianBot.misc.fortune[randomfortune]);
+                                    break;
+                            }
+                        }
+                        if (API.getUsers(data.un, PlugMod) || API.getUsers(data.un, PlugMod) || API.getUsers(data.un, IndianBot.admins)) {
+                            IndianBot.misc.ready = false;
+                            setTimeout(function () { IndianBot.misc.ready = true; }, IndianBot.settings.cooldown * 1000);
+                        }
+                        break;
+
+                    case "roll":
+						    if (typeof command[1] == "undefined") {
+                            var crowd = API.getUsers();
+                            var randomUser = Math.floor(Math.random() * crowd.length);
+                            var randomroll = Math.floor(Math.random() * IndianBot.misc.roll.length);
+                            var randomSentence = Math.floor(Math.random() * 1);
+                            switch (randomSentence) {
+                                case 0:
+                                    API.sendChat("@" + data.un + ", " + IndianBot.misc.roll[randomroll]);
+                                    break;
+                                case 1:
+                                    API.sendChat("@" + data.un + ", " + IndianBot.misc.roll[randomroll]);
+                                    break;
+                            }
+                        } else {
+                            if (command[1].indexOf("@") === 0) command[1] = command[1].substring(1);
+                            var randomroll = Math.floor(Math.random() * IndianBot.misc.roll.length);
+                            var randomSentence = Math.floor(Math.random() * 1);
+                            switch (randomSentence) {
+                                case 0:
+                                    API.sendChat("@" + data.un + ", " + IndianBot.misc.roll[randomroll]);
+                                    break;
+                                case 1:
+                                    API.sendChat("@" + data.un + ", " + IndianBot.misc.ball[randomroll]);
+                                    break;
+                            }
+                        }
+                        if (API.getUsers(data.un, PlugMod) || API.getUsers(data.un, PlugMod) || API.getUsers(data.un, IndianBot.admins)) {
+                            IndianBot.misc.ready = false;
+                            setTimeout(function () { IndianBot.misc.ready = true; }, IndianBot.settings.cooldown * 1000);
+                        }
+                        break;
+
+                        
+                        break;
+
+                    case "8ball":
+                        if (typeof command[1] == "undefined") {
+                            var crowd = API.getUsers();
+                            var randomUser = Math.floor(Math.random() * crowd.length);
+                            var randomBall = Math.floor(Math.random() * IndianBot.misc.ball.length);
+                            var randomSentence = Math.floor(Math.random() * 1);
+                            switch (randomSentence) {
+                                case 0:
+                                    API.sendChat("@" + data.un + ", " + IndianBot.misc.ball[randomBall]);
+                                    break;
+                                case 1:
+                                    API.sendChat("@" + data.un + ", " + IndianBot.misc.ball[randomBall]);
+                                    break;
+                            }
+                        } else {
+                            if (command[1].indexOf("@") === 0) command[1] = command[1].substring(1);
+                            var randomBall = Math.floor(Math.random() * IndianBot.misc.ball.length);
+                            var randomSentence = Math.floor(Math.random() * 1);
+                            switch (randomSentence) {
+                                case 0:
+                                    API.sendChat("@" + data.un + ", " + IndianBot.misc.ball[randomBall]);
+                                    break;
+                                case 1:
+                                    API.sendChat("@" + data.un + ", " + IndianBot.misc.ball[randomBall]);
+                                    break;
+                            }
+                        }
+                        if (API.getUsers(data.un, PlugMod) || API.getUsers(data.un, PlugMod) || API.getUsers(data.un, IndianBot.admins)) {
+                            IndianBot.misc.ready = false;
+                            setTimeout(function () { IndianBot.misc.ready = true; }, IndianBot.settings.cooldown * 1000);
+                        }
+                        break;
+
+                    case "flipcoin":
+                        if (typeof command[1] == "undefined") {
+                            var crowd = API.getUsers();
+                            var randomUser = Math.floor(Math.random() * crowd.length);
+                            var randomHt = Math.floor(Math.random() * IndianBot.misc.ht.length);
+                            var randomSentence = Math.floor(Math.random() * 1);
+                            switch (randomSentence) {
+                                case 0:
+                                    API.sendChat(IndianBot.misc.ht[randomHt]);
+                                    break;
+                                case 1:
+                                    API.sendChat(IndianBot.misc.ht[randomHt]);
+                                    break;
+                            }
+                        } else {
+                            if (command[1].indexOf("@") === 0) command[1] = command[1].substring(1);
+                            var randomHt = Math.floor(Math.random() * IndianBot.misc.ht.length);
+                            var randomSentence = Math.floor(Math.random() * 1);
+                            switch (randomSentence) {
+                                case 0:
+                                    API.sendChat(IndianBot.misc.ht[randomHt]);
+                                    break;
+                                case 1:
+                                    API.sendChat(IndianBot.misc.ht[randomHt]);
+                                    break;
+                            }
+                        }
+                        if (API.getUsers(data.un, PlugMod) || API.getUsers(data.un, PlugMod) || API.getUsers(data.un, IndianBot.admins)) {
+                            IndianBot.misc.ready = false;
+                            setTimeout(function () { IndianBot.misc.ready = true; }, IndianBot.settings.cooldown * 1000);
+                        }
+                        break;
+
+
+                    case "punish":
+                        if (typeof command[1] == "@") {
+                            var crowd = API.getUsers();
+                            var randomUser = Math.floor(Math.random() * crowd.length);
+                            var randomSentence = Math.floor(Math.random() * 6);
+                            switch (randomSentence) {
+                                case 0:
+                                    API.sendChat("/me rubs sandpaper on " + command[1] + "'s scrotum");
+                                    break;
+                                case 1:
+                                    API.sendChat("/me penetrates " + command[1] + " with a sharpie");
+                                    break;
+                                case 2:
+                                    API.sendChat("/me pokes " + command[1] + " in the eyes");
+                                    break;
+                                case 3:
+                                    API.sendChat("/me makes " + command[1] + "'s mother cry");
+                                    break;
+                                case 4:
+                                    API.sendChat("/me pinches " + command[1] + "'s nipples super hard");
+                                    break;
+                                case 5:
+                                    API.sendChat("/me gives " + command[1] + " a wet willy");
+                                    break;
+                                case 6:
+                                    API.sendChat("/me Sets " + command[1] + " hair on fire");
+                                    break;
+                            }
+                        } else {
+                            if (command[1].indexOf("@") === 0) command[1] = command[1].substring(1);
+                            var randomSentence = Math.floor(Math.random() * 6);
+                            switch (randomSentence) {
+                                case 0:
+                                    API.sendChat("/me rubs sandpaper on " + command[1] + "'s scrotum");
+                                    break;
+                                case 1:
+                                    API.sendChat("/me penetrates " + command[1] + " with a sharpie");
+                                    break;
+                                case 2:
+                                    API.sendChat("/me pokes " + command[1] + " in the eyes");
+                                    break;
+                                case 3:
+                                    API.sendChat("/me makes " + command[1] + "'s mother cry");
+                                    break;
+                                case 4:
+                                    API.sendChat("/me pinches " + command[1] + "'s nipples super hard");
+                                    break;
+                                case 5:
+                                    API.sendChat("/me gives " + command[1] + " a wet willy");
+                                    break;
+                                case 6:
+                                    API.sendChat("/me Sets " + command[1] + " hair on fire");
+                                    break;
+                            }
+                        }
+                        if (IndianBot.admins.indexOf(fromID) == -1 || API.getUsers(data.un, PlugMod)) {
+                            IndianBot.misc.ready = false;
+                            setTimeout(function () { IndianBot.misc.ready = true; }, IndianBot.settings.cooldown * 1000);
+                        }
+                        break;
+
+
+                    case "cookie":
+                    case "reward":
+                        if (typeof command[1] == "@") {
+                            var crowd = API.getUsers();
+                            var randomUser = Math.floor(Math.random() * crowd.length);
+                            var randomCookie = Math.floor(Math.random() * IndianBot.misc.cookie.length);
+                            var randomSentence = Math.floor(Math.random() * 1);
+                            switch (randomSentence) {
+                                case 0:
+                                    API.sendChat(crowd[randomUser].username + ", @" + data.un + " has rewarded you with " + IndianBot.misc.cookie[randomCookie] + ". Enjoy!");
+                                    break;
+                                case 1:
+                                    API.sendChat(crowd[randomUser].username + ", @" + data.un + " has rewarded you with " + IndianBot.misc.cookie[randomCookie] + ". Enjoy!");
+                                    break;
+                            }
+                        } else {
+                            if (typeof command[1] == "@") command[1] = command[1].substring(1);
+                            var randomCookie = Math.floor(Math.random() * IndianBot.misc.cookie.length);
+                            var randomSentence = Math.floor(Math.random() * 1);
+                            switch (randomSentence) {
+                                case 0:
+                                    API.sendChat(command[1] + ", " + data.un + " has rewarded you with " + IndianBot.misc.cookie[randomCookie] + ". Enjoy!");
+                                    break;
+                                case 1:
+                                    API.sendChat(command[1] + ", " + data.un + " has rewarded you with " + IndianBot.misc.cookie[randomCookie] + ". Enjoy!");
+                                    break;
+                            }
+                        }
+                        if (API.getUsers(data.un, PlugMod) || API.getUsers(data.un, PlugMod) || API.getUsers(data.un, IndianBot.admins)) {
+                            IndianBot.misc.ready = false;
+                            setTimeout(function () { IndianBot.misc.ready = true; }, IndianBot.settings.cooldown * 1000);
+                        }
+                        break;
+
+
+                    case "hug":
+                        if (command[1].indexOf("@") === 0) 
+                            command[1] = command[1].substring(1);
+                        var crowd = API.getUsers();
+                        var randomUser = Math.floor(Math.random() * crowd.length);
+                        var randomSentence = Math.floor(Math.random() * 3);
+                        switch (randomSentence) {
+                            case 0:
+                                API.sendChat("Hugs? Forget that!");
+                                setTimeout(function () {
+                                    API.sendChat("/me grabs @" + command[1] + "'s ass");
+                                }, 650);
+                                break;
+                            case 1:
+                                API.sendChat("/me gives @" + command[1] + " a big bear hug");
+                                break;
+                            case 2:
+                                API.sendChat("/me gives @" + command[1] + " a soft, furry hug");
+                                break;
+                            case 3:
+                                API.sendChat("/me gives @" + command[1] + " an awkward hug");
+                                break;
+                        }
+                        if (API.getUsers(data.un, PlugMod) || API.getUsers(data.un, PlugMod) || API.getUsers(data.un, IndianBot.admins)) {
+                            IndianBot.misc.ready = false;
+                            setTimeout(function () { IndianBot.misc.ready = true; }, IndianBot.settings.cooldown * 1000);
+                        }
+                        break;
+
+                    case "dogfact":
+                        if (typeof command[1] == "undefined") {
+                            var crowd = API.getUsers();
+                            var randomUser = Math.floor(Math.random() * crowd.length);
+                            var randomDogfact = Math.floor(Math.random() * IndianBot.misc.dogfact.length);
+                            var randomSentence = Math.floor(Math.random() * 1);
+                            switch (randomSentence) {
+                                case 0:
+                                    API.sendChat("@" + data.un + ", " + IndianBot.misc.dogfact[randomDogfact]);
+                                    break;
+                                case 1:
+                                    API.sendChat("@" + data.un + ", " + IndianBot.misc.dogfact[randomDogfact]);
+                                    break;
+                            }
+                        } else {
+                            if (command[1].indexOf("@") === 0) command[1] = command[1].substring(1);
+                            var randomDogfact = Math.floor(Math.random() * IndianBot.misc.dogfact.length);
+                            var randomSentence = Math.floor(Math.random() * 1);
+                            switch (randomSentence) {
+                                case 0:
+                                    API.sendChat("@" + data.un + ", " + IndianBot.misc.dogfact[randomdogfact]);
+                                    break;
+                                case 1:
+                                    API.sendChat("@" + data.un + ", " + IndianBot.misc.dogfact[randomDogfact]);
+                                    break;
+                            }
+                        }
+                        if (API.getUsers(data.un, PlugMod) || API.getUsers(data.un, PlugMod) || API.getUsers(data.un, IndianBot.admins)) {
+                            IndianBot.misc.ready = false;
+                            setTimeout(function () { IndianBot.misc.ready = true; }, IndianBot.settings.cooldown * 1000);
+                        }
+                        break;
+
+                    case "catfact":
+                        if (typeof command[1] == "undefined") {
+                            var crowd = API.getUsers();
+                            var randomUser = Math.floor(Math.random() * crowd.length);
+                            var randomCatfact = Math.floor(Math.random() * IndianBot.misc.catfact.length);
+                            var randomSentence = Math.floor(Math.random() * 1);
+                            switch (randomSentence) {
+                                case 0:
+                                    API.sendChat("@" + data.un + ", " + IndianBot.misc.catfact[randomCatfact]);
+                                    break;
+                                case 1:
+                                    API.sendChat("@" + data.un + ", " + IndianBot.misc.catfact[randomCatfact]);
+                                    break;
+                            }
+                        } else {
+                            if (command[1].indexOf("@") === 0) command[1] = command[1].substring(1);
+                            var randomCatfact = Math.floor(Math.random() * IndianBot.misc.catfact.length);
+                            var randomSentence = Math.floor(Math.random() * 1);
+                            switch (randomSentence) {
+                                case 0:
+                                    API.sendChat("@" + data.un + ", " + IndianBot.misc.catfact[randomCatfact]);
+                                    break;
+                                case 1:
+                                    API.sendChat("@" + data.un + ", " + IndianBot.misc.catfact[randomCatfact]);
+                                    break;
+                            }
+                        }
+                        if (API.getUsers(data.un, PlugMod) || API.getUsers(data.un, PlugMod) || API.getUsers(data.un, IndianBot.admins)) {
+                            IndianBot.misc.ready = false;
+                            setTimeout(function () { IndianBot.misc.ready = true; }, IndianBot.settings.cooldown * 1000);
+                        }
+                        break;
+                }
+            }
+        }
+    });
+
+    API.on(API.CHAT, function (data) { // Chat Function #1
+        if (data.message.split(' ')[0] === '.set') {
+            var msg = data.message, 
+                from = data.un, 
+                command = msg.split(' ')[0].split('').Shift().join(''),
+                roleIndex = { 'none': 0, 'rdj': 1, 'bouncer': 2, 'manager': 3, 'cohost': 4 };
+            if (IndianBot.misc.ready || API.getUsers(data.un, IndianBot.admins) || API.getUsers(data.un, PlugMod)) {
+                var roleCode = roleIndex[msg.split(' ')[1]] || null,
+                    targetUser = getUser(msg.split('@')[1].trim());
+                if (getUser(from).role >= (roleCode-1) && roleCode && targetUser)
+                    API.moderateSetRole(targetUser.id, roleCode);
+            }
+        }
+    });
+
+
+    API.on(API.CHAT, function (data) { // Chat Function #2
+        var fromID = data.uid,
+	        msg = data.message.toLowerCase(),
+	        chatID = data.cid,
+	        responses = ['@{beggar}, Asking for fans isn\'t allowed in here, You\'re now being banned for 1hr!', 'Next time read our lobby\'s rule @{beggar}, Asking for fans isn\'t allowed! ಠ_ಠ', '@{beggar}, You\'re now banned for one hour. Asking for fans isn\'t allowed! ಠ_ಠ'],
+	        randomInt = Math.floor(Math.random() * responses.length);
+        if (msg.match(new RegExp(IndianBot.filters.beggerWords.join('|'), 'gi')) && IndianBot.settings.beggerFilter)
+            return API.moderateDeleteChat(chatID),
+	    	API.sendChat(responses[randomInt].replace(/\{beggar\}/gi, data.un)),
+	    	setTimeout(function () {
+	    	    API.moderateBanUser(fromID, 'h');
+	    	}, 1500), false;
+        if (msg.split(' ')[0].match(new RegExp(IndianBot.filters.commandWords.join('|'), 'gi')))
+            return API.moderateDeleteChat(chatID), true;
+    });
+
+    API.on(API.CHAT, function (data) { // Chat Function #3
+        msg = data.message.toLowerCase().replace(/&colon;/g, ':'),
+	        chatID = data.cid,
+	        fromID = data.uid,
+	        userfrom = data.un;
+        /* Match Arrays */
+        var inputMatches = [
+		    ['indianbot'],//bot
+        	[':eyeroll:', ':notamused:', ':yuno:'], // "Misc" Messages
+        	['hello bot', 'bot hello', 'hi bot', 'bot hi', 'sup bot', 'bot sup', 'hey bot', 'bot hey', 'howdy bot', 'bot howdy', 'aye bot', 'yo bot', 'waddup bot', 'bot waddup'], // "Hello" Messages
+        	['how are you bot', 'bot how are you', 'hru bot', 'bot hru', 'doing good bot?', 'bot doing good?', 'hows it going bot', 'bot how is it going', 'how you doing bot', 'bot how you doing'], // "Hru" Messages
+        	['ty bot', 'bot ty', 'thank you bot', 'bot thank you', 'thanks bot', 'bot thanks', 'thx bot', 'bot thx', 'thanks for asking bot', 'bot thanks for asking', 'thx for asking bot', 'bot thx for asking'], // "TY" Messages
+        	['ily bot', 'bot ily', 'i love you bot', 'bot i love you', 'i luv you bot', 'bot i luv you', 'i luv u bot', 'bot i luv u', 'i luv you bot', 'i love you more bot', 'bot love you', 'love you bot'], // "Love" Messages
+        	['fuck you bot', 'bot fuck you', 'f u bot', 'bot f u', 'fuhk yuh bot', 'bot fuhk you'], // "Fuck" Messages
+        	['bot shut up', 'shut up bot', 'stfu bot', 'bot stfu', 'hush bot', 'bot hush', 'hush it bot', 'bot hush it', 'be quiet bot', 'bot be quiet', 'shut the hell up bot', 'bot shut the hell up'], // "stfu" Messages
+        	['i got to go', 'igtg', 'gtg', 'be back', 'going off', 'off to', 'have to go', 'bye bot', 'bot bye', 'night'] // "Afk" Messages
+        ];
+        var outputMessages = [
+		    ['YES! you mention my name.'],// bot
+			['/me ¬_¬', '/me ಠ_ಠ', '/me ლ(ಥ益ಥლ'], // "Misc" Messages
+			['Hey!', 'Oh hey there!', 'Good day sir!', 'Hi', 'Howdy!', 'Waddup!'], // Hello Messages
+			['I\'m good thanks for asking :)', 'Doing great yo and yourself?', 'All Good Mate!', 'I\'m good thanks for asking!', 'Yeee i\'m cool and youself yo?'], // "Hru" Messages
+			["You're welcome! :D", "Your always welcome bro!", "No prob man.."], // "TY" Messages
+			['Fuck yeahh!! :D I love you too baby!', 'I love you too ;).....   Sex?... JK you don\'t want this big thing ;)', 'I love you too o.0', 'Sweet.. Love you to ;)'], // "Love" Messages
+			['Nah.. I don\'t need another fuck after giving your mom one last night.', '</input fuck> Jk... Fuck you too', '< Test fuck >.. Sorry 0% fucks were given by me.'], // "Fuck" Messages
+			['<Test/ShutUp ... Nope', 'Eat this http://i.imgur.com/CSq5xkH.gif', 'No you shut up!', 'But i was made to talk.. :(', 'Just because i am a bot doesn\'t mean you have to tell me to shut up. Why don\'t you shut up!', 'Hey idiot! Ever heard of pressing the "Ignore button"?'], // "stfu" messages
+			['See ya man!', 'Awww, See ya babe.', 'Glad you came by thanks! :kissing_heart:', 'Thanks for coming. Hope to see you soon! :blue_heart:'] // "Afk" Messages
+        ];
+        function sendMessage(text, cooldown) {
+            API.sendChat(((text.split(' ')[0] === '/me') ? '@' + userfrom + ' ' : '') + text);
+            IndianBot.misc.ready = false;
+            if (cooldown)
+                setTimeout(function () {
+                    IndianBot.misc.ready = true;
+                }, (IndianBot.settings.cooldown * 1000));
+        }
+        if (API.getUsers(userfrom, PlugMod) || API.getUsers(userfrom, PlugMod) || API.getUsers(userfrom, IndianBot.admins)) {
+            for (var i = 0; i < inputMatches[0].length; i++)
+                if (msg.match(inputMatches[0][i]))
+                    sendMessage(outputMessages[0][i], false);
+            for (var i = 1; i < inputMatches.length; i++)
+                for (var x = 0; x < inputMatches[i].length; x++)
+                    if (msg.match(inputMatches[i][x]))
+                        return sendMessage(outputMessages[x][Math.floor(Math.random() * outputMessages[x].length)], true);
+        }
+    });
+
+    botMethods.loadStorage();
+    console.log("IndianBot-Script version " + IndianBot.misc.version);
+
+    setTimeout(function () {
+        $.getScript('http://connect.soundcloud.com/sdk.js');
+    }, 700);
+
+    setTimeout(function () {
+        SC.initialize({
+            client_id: '23025049683040'
+        });
+    }, 3000);
+
+    API.sendChat('Indian Bot Version ' + IndianBot.misc.version + ' Activated!');
+} else {
+    alert("This bot can only function at http://plug.dj/theindiansonmc");
+};
