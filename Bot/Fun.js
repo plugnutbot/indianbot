@@ -69,7 +69,7 @@ var blockedArtists = [
 
 // Filter Keywords
 IndianBot.filters.beggerWords = ["fanme", "fan me", "fan4fan", "fan 4 fan", "fan pls", "fans please", "more fan", "fan back", "give me fans", "gimme fans", "need fan", "fan for fan"];
-IndianBot.filters.commandWords = ['.command', '.commands', ".linkin", ".say", ".test", ".ping", ".marco", ".reward", ".add", ".addsong", ".flipcoin", ".catfact", ".dogfact", ".hug", ".8ball", ".fortune", ".songlink", ".download", ".help", ".whywoot", ".whymeh", ".props", ".votes", ".woot", ".meh", ".version", ".userstats @", ".mystats", ".source", ".roomstats", ".roomstats2", ".register", ".join", ".leave", ".roll"];
+IndianBot.filters.commandWords = ['.banlist','.command', '.commands', ".linkin", ".say", ".test", ".ping", ".marco", ".reward", ".add", ".addsong", ".flipcoin", ".catfact", ".dogfact", ".hug", ".8ball", ".fortune", ".songlink", ".download", ".help", ".whywoot", ".whymeh", ".props", ".votes", ".woot", ".meh", ".version", ".userstats @", ".mystats", ".source", ".roomstats", ".roomstats2", ".register", ".join", ".leave", ".roll"];
 
 
 // Fun misc
@@ -888,6 +888,12 @@ if (window.location.hostname === "plug.dj") {
 
                         
                         break;
+                        
+                    case "banlist":
+                    if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
+                    else {
+                        API.sendChat('/me These Are Banned '+ blockedSongs +'|'+ blockedArtists +'.');
+                    }
 
                     case "8ball":
                         if (typeof command[1] == "undefined") {
