@@ -53,7 +53,7 @@ PlugMod = ["API.ROLE.ADMIN", "API.ROLE.AMBASSADOR", "API.ROLE.HOST", "API.ROLE.C
 
 // Random announcements.
 var announcements =
-["We Are The MineCraft Indians"];
+[""];
 
 // Keywords of blocked songs
 var blockedSongs = []; //dont work
@@ -69,7 +69,7 @@ var blockedArtists = [
 
 // Filter Keywords
 IndianBot.filters.beggerWords = ["fanme", "fan me", "fan4fan", "fan 4 fan", "fan pls", "fans please", "more fan", "fan back", "give me fans", "gimme fans", "need fan", "fan for fan"];
-IndianBot.filters.commandWords = ['.banlist','.command', '.commands', ".linkin", ".say", ".test", ".ping", ".marco", ".reward", ".add", ".addsong", ".flipcoin", ".catfact", ".dogfact", ".hug", ".8ball", ".fortune", ".songlink", ".download", ".help", ".whywoot", ".whymeh", ".props", ".votes", ".woot", ".meh", ".version", ".userstats @", ".mystats", ".source", ".roomstats", ".roomstats2", ".register", ".join", ".leave", ".roll"];
+IndianBot.filters.commandWords = ['.masterkill''.songLimit''.banlist','.command', '.commands', ".linkin", ".say", ".test", ".ping", ".marco", ".reward", ".add", ".addsong", ".flipcoin", ".catfact", ".dogfact", ".hug", ".8ball", ".fortune", ".songlink", ".download", ".help", ".whywoot", ".whymeh", ".props", ".votes", ".woot", ".meh", ".version", ".userstats @", ".mystats", ".source", ".roomstats", ".roomstats2", ".register", ".join", ".leave", ".roll"];
 
 
 // Fun misc
@@ -664,7 +664,7 @@ if (window.location.hostname === "plug.dj") {
                         }
                         break;
 
-                    case "die5046":
+                    case "masterkill":
                         if (API.getUsers(data.un, PlugMod) || API.getUsers(data.un, IndianBot.admins)) {
                             API.sendChat('Unhooking Events...');
                             setTimeout(function () {
