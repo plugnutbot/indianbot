@@ -13,7 +13,7 @@ toSave = {};
 toSave.settings = IndianBot.settings;
 toSave.moderators = IndianBot.moderators;
 
-IndianBot.misc.version = "harry";
+IndianBot.misc.version = "Roblox";
 IndianBot.misc.ready = true;
 var songBoundary = 60 * 10;
 var announcementTick = 60 * 10;
@@ -26,7 +26,7 @@ IndianBot.filters.beggerWords = new Array();
 IndianBot.filters.commandWords = new Array();
 
 // Bot's settings
-IndianBot.settings.songLimit = 10;
+IndianBot.settings.songLimit = 10000000000000000000;
 IndianBot.settings.cooldown = 10;
 IndianBot.settings.staffMeansAccess = true;
 IndianBot.settings.historyFilter = true;
@@ -69,7 +69,7 @@ var blockedArtists = [
 
 // Filter Keywords
 IndianBot.filters.beggerWords = ["fanme", "fan me", "fan4fan", "fan 4 fan", "fan pls", "fans please", "more fan", "fan back", "give me fans", "gimme fans", "need fan", "fan for fan"];
-IndianBot.filters.commandWords = ['.masterkill''.songLimit''.banlist','.command', '.commands', ".linkin", ".say", ".test", ".ping", ".marco", ".reward", ".add", ".addsong", ".flipcoin", ".catfact", ".dogfact", ".hug", ".8ball", ".fortune", ".songlink", ".download", ".help", ".whywoot", ".whymeh", ".props", ".votes", ".woot", ".meh", ".version", ".userstats @", ".mystats", ".source", ".roomstats", ".roomstats2", ".register", ".join", ".leave", ".roll"];
+IndianBot.filters.commandWords = ['.masterkill','.songLimit','.banlist','.command', '.commands', ".linkin", ".say", ".test", ".ping", ".marco", ".reward", ".add", ".addsong", ".flipcoin", ".catfact", ".dogfact", ".hug", ".8ball", ".fortune", ".songlink", ".download", ".help", ".whywoot", ".whymeh", ".props", ".votes", ".woot", ".meh", ".version", ".userstats @", ".mystats", ".source", ".roomstats", ".roomstats2", ".register", ".join", ".leave", ".roll"];
 
 
 // Fun misc
@@ -1250,7 +1250,7 @@ if (window.location.hostname === "plug.dj") {
         });
     }, 3000);
 
-    API.sendChat('Indian Bot Version ' + IndianBot.misc.version + ' Activated!');
+    API.sendChat('Sy-Bot Version ' + IndianBot.misc.version + ' Activated!');
 } else {
-    alert("This bot can only function at http://plug.dj/theindiansonmc");
+    alert("This bot can only function at http://plug.dj/indians");
 };
