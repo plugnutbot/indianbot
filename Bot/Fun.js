@@ -13,7 +13,7 @@ toSave = {};
 toSave.settings = IndianBot.settings;
 toSave.moderators = IndianBot.moderators;
 
-IndianBot.misc.version = "Roblox";
+IndianBot.misc.version = "1.0.0.0.0.0"
 IndianBot.misc.ready = true;
 var songBoundary = 60 * 10;
 var announcementTick = 60 * 10;
